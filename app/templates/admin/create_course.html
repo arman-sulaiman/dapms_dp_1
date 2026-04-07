@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-2xl bg-white rounded-2xl shadow p-6">
+  <h2 class="text-2xl font-bold mb-6">Create Course</h2>
+  <form method="post" class="space-y-4">
+    <input name="course_code" placeholder="Course Code" class="w-full border rounded-xl px-4 py-3" required>
+    <input name="title" placeholder="Course Title" class="w-full border rounded-xl px-4 py-3" required>
+    <input name="credit" type="number" placeholder="Credit" class="w-full border rounded-xl px-4 py-3" required>
+    <button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Save</button>
+  </form>
+</div>
+{% endblock %}

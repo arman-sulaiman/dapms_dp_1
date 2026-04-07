@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DAPMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+  <nav class="bg-white border-b sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold">DAPMS</h1>
+        <p class="text-sm text-slate-500">Digital Academic Performance Management System</p>
+      </div>
+     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+  <div class="flex flex-wrap items-center gap-3">
+    {% if current_term %}
+      <span class="inline-flex items-center px-4 py-2 rounded-full bg-sky-100 text-sky-700 text-sm font-semibold">
+        Running Term: {{ current_term['name'] }}
+      </span>
+    {% endif %}
+
+    {% if current_user %}
+      <div class="inline-flex items-center px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm">
+        <span class="font-semibold text-slate-800">{{ current_user['name'] }}</span>
+        
+       
+        {% if current_user['department'] %}
+          <span class="mx-2 text-slate-400">•</span>
+          <span>{{ current_user['department'] }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+
+    {% if session.get('role') == 'admin' %}
+      <a href="{{ url_for('admin.dashboard') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium transition
+         {% if request.endpoint == 'admin.dashboard' %}
+           bg-sky-600 text-white font-bold shadow
+         {% else %}
+           text-slate-700 hover:bg-slate-100 hover:text-sky-700
+         {% endif %}">
+        Dashboard
+      </a>
+    {% endif %}
+
+    {% if session.get('role') == 'teacher' %}
+      <a href="{{ url_for('teacher.dashboard') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium transition
+         {% if request.endpoint == 'teacher.dashboard' %}
+           bg-sky-600 text-white font-bold shadow
+         {% else %}
+           text-slate-700 hover:bg-slate-100 hover:text-sky-700
+         {% endif %}">
+        Dashboard
+      </a>
+    {% endif %}
+
+    {% if session.get('role') == 'student' %}
+      <a href="{{ url_for('student.dashboard') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium transition
+         {% if request.endpoint == 'student.dashboard' %}
+           bg-sky-600 text-white font-bold shadow
+         {% else %}
+           text-slate-700 hover:bg-slate-100 hover:text-sky-700
+         {% endif %}">
+        Dashboard
+      </a>
+    {% endif %}
+
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('auth.profile') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium transition
+         {% if request.endpoint == 'auth.profile' %}
+           bg-sky-600 text-white font-bold shadow
+         {% else %}
+           text-slate-700 hover:bg-slate-100 hover:text-sky-700
+         {% endif %}">
+        Profile
+      </a>
+    {% endif %}
+
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('auth.change_password') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium transition
+         {% if request.endpoint == 'auth.change_password' %}
+           bg-sky-600 text-white font-bold shadow
+         {% else %}
+           text-slate-700 hover:bg-slate-100 hover:text-sky-700
+         {% endif %}">
+        Change Password
+      </a>
+    {% endif %}
+
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('auth.logout') }}"
+         class="px-4 py-2 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition">
+        Logout
+      </a>
+    {% else %}
+      <a href="{{ url_for('auth.forgot_password') }}"
+         class="px-4 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-sky-700 transition">
+        Forgot Password
+      </a>
+    {% endif %}
+
+  </div>
+</div>
+    </div>
+  </nav>
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-3 mb-6">
+          {% for category, message in messages %}
+            <div class="rounded-xl px-4 py-3 {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

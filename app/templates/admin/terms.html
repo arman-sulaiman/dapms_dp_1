@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-bold">Manage Terms</h2>
+      
+      {% if running_term %}<div class="mt-3 inline-flex px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-sm">Current running term: {{ running_term['name'] }}</div>{% endif %}
+    </div>
+    <a href="{{ url_for('admin.create_term') }}" class="bg-slate-900 text-white px-4 py-2 rounded-xl">Create Term</a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="border-b text-left text-slate-500">
+          <th class="py-3">Term</th>
+          <th class="py-3">Start</th>
+          <th class="py-3">End</th>
+          <th class="py-3">Status</th>
+          <th class="py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for term in terms %}
+        <tr class="border-b align-top">
+          <td class="py-3 font-semibold">{{ term['name'] }}</td>
+          <td class="py-3">{{ term['start_date'] }}</td>
+          <td class="py-3">{{ term['end_date'] }}</td>
+          <td class="py-3">
+            <span class="px-3 py-1 rounded-full text-xs {% if term['status']=='running' %}bg-emerald-100 text-emerald-700{% elif term['status']=='upcoming' %}bg-amber-100 text-amber-700{% else %}bg-slate-100 text-slate-700{% endif %}">{{ term['status'] }}</span>
+          </td>
+          <td class="py-3">
+            <form method="post" action="{{ url_for('admin.update_term_status', term_id=term['id']) }}" class="flex gap-2 flex-wrap">
+              <select name="status" class="border rounded-xl px-3 py-2">
+                <option value="running" {% if term['status']=='running' %}selected{% endif %}>Start / Run</option>
+                <option value="upcoming" {% if term['status']=='upcoming' %}selected{% endif %}>Upcoming</option>
+                <option value="completed" {% if term['status']=='completed' %}selected{% endif %}>Complete / Archive</option>
+              </select>
+              <button class="bg-slate-900 text-white px-4 py-2 rounded-xl">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="py-6 text-slate-500">No terms found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

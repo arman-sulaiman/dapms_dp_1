@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="space-y-6">
+<div class="bg-white rounded-2xl shadow p-6">
+  <h2 class="text-2xl font-bold mb-4">Section Result Review</h2>
+  <div class="overflow-auto"><table class="w-full text-sm"><tr class="border-b"><th class="text-left py-2">Student ID</th><th class="text-left">Name</th><th class="text-left">Total</th><th class="text-left">Grade</th><th class="text-left">GP</th><th class="text-left">Status</th></tr>{% for r in rows %}<tr class="border-b"><td class="py-2">{{ r['student_id'] }}</td><td>{{ r['name'] }}</td><td>{{ r['total'] }}</td><td>{{ r['letter_grade'] }}</td><td>{{ r['grade_point'] }}</td><td>{{ r['status'] }}</td></tr>{% endfor %}</table></div>
+</div>
+<form method="post"><button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Approve & Publish Result</button></form>
+</div>
+{% endblock %}

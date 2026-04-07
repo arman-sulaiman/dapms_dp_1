@@ -1,0 +1,166 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6 space-y-6">
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800">Students</h2>
+      <p class="text-slate-500 mt-1">Filter students by department, term prefix, or student ID.</p>
+    </div>
+    <div class="text-sm text-slate-500">
+      Total Students: <span id="studentCount" class="font-semibold text-slate-800">{{ rows|length }}</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-slate-50 rounded-2xl p-4 space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Department Filter</label>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-sky-600 text-white font-semibold" data-dept="all">
+          All
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="CSE">
+          CSE
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="BBA">
+          BBA
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="EEE">
+          EEE
+        </button>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label for="termFilter" class="block text-sm font-semibold text-slate-700 mb-2">Term Filter</label>
+        <input
+          id="termFilter"
+          type="text"
+          placeholder="Enter term prefix, e.g. 243"
+          class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+        >
+      </div>
+
+      <div>
+        <label for="idSearch" class="block text-sm font-semibold text-slate-700 mb-2">Search by Student ID</label>
+        <input
+          id="idSearch"
+          type="text"
+          placeholder="Enter student ID"
+          class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-auto rounded-2xl border border-slate-200">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-100 text-slate-700">
+        <tr class="border-b">
+          <th class="text-left px-4 py-3 font-semibold">Student ID</th>
+          <th class="text-left px-4 py-3 font-semibold">Name</th>
+          <th class="text-left px-4 py-3 font-semibold">Email</th>
+          <th class="text-left px-4 py-3 font-semibold">Department</th>
+          <th class="text-left px-4 py-3 font-semibold">Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        {% for r in rows %}
+        <tr
+          class="border-b hover:bg-slate-50 student-row"
+          data-student-id="{{ r['student_id'] }}"
+          data-department="{{ r['department'] }}"
+          data-term="{{ r['student_id'][:3] }}"
+        >
+          <td class="px-4 py-3 font-medium text-slate-800">{{ r['student_id'] }}</td>
+          <td class="px-4 py-3">{{ r['name'] }}</td>
+          <td class="px-4 py-3">{{ r['email'] }}</td>
+          <td class="px-4 py-3">{{ r['department'] }}</td>
+          <td class="px-4 py-3">
+            <a
+              class="text-sky-700 font-medium hover:text-sky-900"
+              href="{{ url_for('admin.reset_user_password', user_id=r['id']) }}"
+            >
+              Reset Password
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr id="noResultsRow" class="hidden">
+          <td colspan="5" class="px-4 py-6 text-center text-slate-500">
+            No students found for the selected filter.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let selectedDepartment = 'all';
+
+  const deptButtons = document.querySelectorAll('.dept-filter-btn');
+  const termFilterInput = document.getElementById('termFilter');
+  const idSearchInput = document.getElementById('idSearch');
+  const studentRows = document.querySelectorAll('.student-row');
+  const noResultsRow = document.getElementById('noResultsRow');
+  const studentCount = document.getElementById('studentCount');
+
+  function updateDepartmentButtons() {
+    deptButtons.forEach(btn => {
+      const isActive = btn.dataset.dept === selectedDepartment;
+      btn.className = isActive
+        ? 'dept-filter-btn px-4 py-2 rounded-xl bg-sky-600 text-white font-semibold'
+        : 'dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium';
+    });
+  }
+
+  function applyFilters() {
+    const termValue = termFilterInput.value.trim();
+    const idValue = idSearchInput.value.trim().toLowerCase();
+
+    let visibleCount = 0;
+
+    studentRows.forEach(row => {
+      const department = row.dataset.department;
+      const term = row.dataset.term;
+      const studentId = row.dataset.studentId.toLowerCase();
+
+      const departmentMatch =
+        selectedDepartment === 'all' || department === selectedDepartment;
+
+      const termMatch =
+        termValue === '' || term.startsWith(termValue);
+
+      const idMatch =
+        idValue === '' || studentId.includes(idValue);
+
+      if (departmentMatch && termMatch && idMatch) {
+        row.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    studentCount.textContent = visibleCount;
+    noResultsRow.classList.toggle('hidden', visibleCount !== 0);
+  }
+
+  deptButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      selectedDepartment = this.dataset.dept;
+      updateDepartmentButtons();
+      applyFilters();
+    });
+  });
+
+  termFilterInput.addEventListener('input', applyFilters);
+  idSearchInput.addEventListener('input', applyFilters);
+
+  updateDepartmentButtons();
+  applyFilters();
+</script>
+{% endblock %}

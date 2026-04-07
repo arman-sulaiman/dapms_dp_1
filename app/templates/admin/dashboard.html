@@ -1,0 +1,288 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% macro icon_badge(bg='bg-sky-100', color='text-sky-700', path='M12 4v16m8-8H4') -%}
+<div class="w-12 h-12 rounded-2xl {{ bg }} flex items-center justify-center shrink-0">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 {{ color }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+    <path stroke-linecap="round" stroke-linejoin="round" d="{{ path }}" />
+  </svg>
+</div>
+{%- endmacro %}
+
+<div class="space-y-6">
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-r from-slate-900 via-sky-800 to-sky-600 text-white rounded-3xl shadow p-8 lg:p-10">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <div>
+        <h2 class="text-3xl lg:text-4xl font-extrabold">Admin Dashboard</h2>
+        <p class="mt-3 text-slate-200 text-lg">
+          Manage users, terms, courses, sections, uploads, password requests, and result approval from one organized workspace.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 max-w-[280px]">
+       <div class="col-span-2 bg-white/5 rounded-2xl p-4 flex items-center justify-center">
+         <img src="{{ url_for('static', filename='logo.png') }}"
+       alt="DAPMS Logo"
+       class="h-24 w-auto object-contain">
+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top stats -->
+  <div class="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Students</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['students'] }}</div>
+        </div>
+        {{ icon_badge('bg-sky-100', 'text-sky-700', 'M12 14c3.866 0 7 1.79 7 4v1H5v-1c0-2.21 3.134-4 7-4zm0-2a4 4 0 100-8 4 4 0 000 8z') }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Teachers</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['teachers'] }}</div>
+        </div>
+        {{ icon_badge('bg-emerald-100', 'text-emerald-700', 'M12 14c3.866 0 7 1.79 7 4v1H5v-1c0-2.21 3.134-4 7-4zm0-2a4 4 0 100-8 4 4 0 000 8zM19 8h2m-1-1v2') }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Courses</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['courses'] }}</div>
+        </div>
+        {{ icon_badge('bg-violet-100', 'text-violet-700', 'M4 6.5L12 4l8 2.5M4 6.5v11L12 20l8-2.5v-11M12 4v16') }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Sections</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['sections'] }}</div> 
+        </div>
+        {{ icon_badge('bg-amber-100', 'text-amber-700', 'M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5') }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Grade Pending</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['pending_results'] }}</div>
+        </div>
+        {{ icon_badge('bg-rose-100', 'text-rose-700', 'M4 19h16M7 16V8m5 8V5m5 11v-6') }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow border border-slate-200 p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Re-Requests</div>
+          <div class="text-3xl font-extrabold mt-2 text-slate-900">{{ stats['pending_resets'] }}</div>
+        </div>
+        {{ icon_badge('bg-red-100', 'text-red-700', 'M12 15v2m-6 3h12a2 2 0 002-2v-5a2 2 0 00-2-2h-1V9a5 5 0 00-10 0v2H6a2 2 0 00-2 2v5a2 2 0 002 2z') }}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Current term + core academic actions -->
+  <div class="grid xl:grid-cols-3 gap-6">
+
+    <div class="xl:col-span-2 bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">Academic Management</h3>
+          <p class="text-slate-500 mt-1">Set up and manage core academic workflow.</p>
+        </div>
+
+        {% if stats['active_term'] %}
+          <span class="px-4 py-2 rounded-full bg-sky-100 text-sky-700 font-semibold text-sm">
+            Running Term: {{ stats['active_term']['name'] }}
+          </span>
+        {% else %}
+          <span class="px-4 py-2 rounded-full bg-slate-100 text-slate-600 font-semibold text-sm">
+            No Running Term
+          </span>
+        {% endif %}
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="{{ url_for('admin.create_term') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-sky-100', 'text-sky-700', 'M8 7V3m8 4V3m-9 8h10m-13 9h16a2 2 0 002-2V8a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z') }}
+            <div>
+              <div class="text-lg font-bold text-slate-900">Create Term</div>
+              <p class="text-sm text-slate-500 mt-1">Add a new academic term and control running/upcoming/completed status.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.create_course') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-violet-100', 'text-violet-700', 'M4 6.5L12 4l8 2.5M4 6.5v11L12 20l8-2.5v-11M12 4v16') }}
+            <div>
+              <div class="text-lg font-bold text-slate-900">Create Course</div>
+              <p class="text-sm text-slate-500 mt-1">Add theory or lab course with unique code and credit.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.create_section') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-amber-100', 'text-amber-700', 'M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5') }}
+            <div>
+              <div class="text-lg font-bold text-slate-900">Create Section</div>
+              <p class="text-sm text-slate-500 mt-1">Assign teacher, room, term, and course to a section.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.results') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-emerald-100', 'text-emerald-700', 'M5 13l4 4L19 7') }}
+            <div>
+              <div class="text-lg font-bold text-slate-900">Result Approval</div>
+              <p class="text-sm text-slate-500 mt-1">Review submitted section results and publish approved records.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <h3 class="text-xl font-bold text-slate-900">System Summary</h3>
+      <p class="text-slate-500 mt-1 mb-5">Current status and important admin reminders.</p>
+
+      <div class="space-y-4">
+        <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+          <div class="text-sm text-slate-500">Running Term</div>
+          <div class="font-bold text-slate-800 mt-1">
+            {% if stats['active_term'] %}
+              {{ stats['active_term']['name'] }}
+            {% else %}
+              Not set yet
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+          <div class="text-sm text-slate-500">Pending Result Approvals</div>
+          <div class="font-bold text-slate-800 mt-1">{{ stats['pending_results'] }}</div>
+        </div>
+
+        <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+          <div class="text-sm text-slate-500">Pending Password Requests</div>
+          <div class="font-bold text-slate-800 mt-1">{{ stats['pending_resets'] }}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Management area -->
+  <div class="grid xl:grid-cols-2 gap-6">
+
+    <div class="bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">User & Record Management</h3>
+          <p class="text-slate-500 mt-1">Browse and manage users and academic records.</p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <a href="{{ url_for('admin.students') }}" class="rounded-2xl bg-slate-50 border border-slate-200 p-5 hover:bg-slate-100 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-sky-100', 'text-sky-700', 'M12 14c3.866 0 7 1.79 7 4v1H5v-1c0-2.21 3.134-4 7-4zm0-2a4 4 0 100-8 4 4 0 000 8z') }}
+            <div>
+              <div class="font-bold text-slate-900">Student List</div>
+              <p class="text-sm text-slate-500 mt-1">View students and reset passwords when needed.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.teachers') }}" class="rounded-2xl bg-slate-50 border border-slate-200 p-5 hover:bg-slate-100 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-emerald-100', 'text-emerald-700', 'M12 14c3.866 0 7 1.79 7 4v1H5v-1c0-2.21 3.134-4 7-4zm0-2a4 4 0 100-8 4 4 0 000 8zM19 8h2m-1-1v2') }}
+            <div>
+              <div class="font-bold text-slate-900">Teacher List</div>
+              <p class="text-sm text-slate-500 mt-1">Manage teacher records and access information.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.sections') }}" class="rounded-2xl bg-slate-50 border border-slate-200 p-5 hover:bg-slate-100 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-amber-100', 'text-amber-700', 'M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5') }}
+            <div>
+              <div class="font-bold text-slate-900">Section List</div>
+              <p class="text-sm text-slate-500 mt-1">Review active and archived sections with teacher assignment.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin.password_requests') }}" class="rounded-2xl bg-slate-50 border border-slate-200 p-5 hover:bg-slate-100 transition">
+          <div class="flex items-start gap-4">
+            {{ icon_badge('bg-red-100', 'text-red-700', 'M12 15v2m-6 3h12a2 2 0 002-2v-5a2 2 0 00-2-2h-1V9a5 5 0 00-10 0v2H6a2 2 0 00-2 2v5a2 2 0 002 2z') }}
+            <div>
+              <div class="font-bold text-slate-900">Password Requests</div>
+              <p class="text-sm text-slate-500 mt-1">Handle forgot-password requests and support account recovery.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">Bulk Upload Center</h3>
+          <p class="text-slate-500 mt-1">Import data efficiently with prepared Excel templates.</p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4">
+        <a href="{{ url_for('admin.upload_students') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition text-center">
+          <div class="mx-auto mb-3 w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" />
+            </svg>
+          </div>
+          <div class="font-semibold text-slate-800">Upload Students</div>
+        </a>
+
+        <a href="{{ url_for('admin.upload_teachers') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition text-center">
+          <div class="mx-auto mb-3 w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" />
+            </svg>
+          </div>
+          <div class="font-semibold text-slate-800">Upload Teachers</div>
+        </a>
+
+        <a href="{{ url_for('admin.upload_courses') }}" class="rounded-2xl border border-slate-200 p-5 hover:border-sky-300 hover:bg-sky-50 transition text-center">
+          <div class="mx-auto mb-3 w-12 h-12 rounded-2xl bg-violet-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-violet-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" />
+            </svg>
+          </div>
+          <div class="font-semibold text-slate-800">Upload Courses</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

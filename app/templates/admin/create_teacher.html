@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-2xl bg-white rounded-2xl shadow p-6">
+  <h2 class="text-2xl font-bold mb-2">Create Teacher</h2>
+  <p class="text-slate-500 mb-6">Teacher ID will be created automatically in the format like T014001.</p>
+  <form method="post" class="space-y-4">
+    <input name="name" placeholder="Name" class="w-full border rounded-xl px-4 py-3" required>
+    <input name="email" type="email" placeholder="Email" class="w-full border rounded-xl px-4 py-3" required>
+    <select name="department" class="w-full border rounded-xl px-4 py-3" required>
+      {% for dept, code in departments.items() %}<option value="{{ dept }}">{{ dept }} ({{ code }})</option>{% endfor %}
+    </select>
+    <input name="password" placeholder="Password (optional, default: teacher123)" class="w-full border rounded-xl px-4 py-3">
+    <button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Save</button>
+  </form>
+</div>
+{% endblock %}

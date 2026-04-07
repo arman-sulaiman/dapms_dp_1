@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-xl bg-white rounded-2xl shadow p-6">
+  <h2 class="text-2xl font-bold mb-6">Upload Teachers</h2>
+  <p class="text-slate-500 mb-4">Upload an xlsx file.</p>
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    <input type="file" name="file" accept=".xlsx" class="w-full border rounded-xl px-4 py-3" required>
+    <button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Upload</button>
+  </form>
+</div>
+{% endblock %}

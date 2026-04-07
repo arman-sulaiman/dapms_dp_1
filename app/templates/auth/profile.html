@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow p-8 space-y-6">
+  <div>
+    <h2 class="text-3xl font-bold">Profile</h2>
+    <p class="text-slate-700">{{ profile['role']|title }}'s Profile</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-4 text-sm">
+    <div class="border rounded-xl p-4"><div class="text-slate-500">Email</div><div class="font-semibold">{{ profile['email'] }}</div></div>
+    <div class="border rounded-xl p-4"><div class="text-slate-500">Department</div><div class="font-semibold">{{ profile['department'] }}</div></div>
+    {% if profile['student_id'] %}<div class="border rounded-xl p-4"><div class="text-slate-500">Student ID</div><div class="font-semibold">{{ profile['student_id'] }}</div></div>{% endif %}
+    {% if profile['teacher_id'] %}<div class="border rounded-xl p-4"><div class="text-slate-500">Teacher ID</div><div class="font-semibold">{{ profile['teacher_id'] }}</div></div>{% endif %}
+    {% if profile['admin_id'] %}<div class="border rounded-xl p-4"><div class="text-slate-500">Admin ID</div><div class="font-semibold">{{ profile['admin_id'] }}</div></div>{% endif %}
+  </div>
+  <form method="post" class="space-y-4">
+    <input name="name" value="{{ profile['name'] }}" class="w-full border rounded-xl px-4 py-3" required>
+    <input name="department" value="{{ profile['department'] }}" class="w-full border rounded-xl px-4 py-3" required>
+    <button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Save Profile</button>
+  </form>
+</div>
+{% endblock %}

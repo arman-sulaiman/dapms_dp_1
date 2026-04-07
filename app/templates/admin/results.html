@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6">
+  <h2 class="text-2xl font-bold mb-4">Result Approval Queue</h2>
+  <div class="space-y-3">{% for r in rows %}<a href="{{ url_for('admin.result_detail', section_id=r['id']) }}" class="block border rounded-xl p-4 hover:bg-slate-50"><div class="font-semibold">{{ r['course_code'] }} - {{ r['title'] }}</div><div class="text-sm text-slate-500">Section {{ r['section_no'] }} | {{ r['term_name'] }} | {{ r['status'] }}</div></a>{% else %}<div class="text-slate-500">No result submission yet.</div>{% endfor %}</div>
+</div>
+{% endblock %}

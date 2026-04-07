@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="space-y-6">
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-slate-500">CGPA</div><div class="text-3xl font-bold mt-2">{{ cgpa }}</div></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-slate-500">Completed Credits</div><div class="text-3xl font-bold mt-2">{{ total_credits }}</div></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-slate-500">Visible Terms</div><div class="text-3xl font-bold mt-2">{{ term_rows|length }}</div></div>
+  </div>
+  <div class="bg-white rounded-2xl shadow p-6"><h2 class="text-2xl font-bold mb-4">Term GPA</h2><div class="overflow-auto"><table class="w-full text-sm"><tr class="border-b"><th class="text-left py-2">Term</th><th class="text-left">Credits</th><th class="text-left">GPA</th></tr>{% for r in term_rows %}<tr class="border-b"><td class="py-2">{{ r['term_name'] }}</td><td>{{ r['credits'] }}</td><td>{{ r['gpa'] }}</td></tr>{% else %}<tr><td colspan="3" class="py-4 text-slate-500">No published result yet.</td></tr>{% endfor %}</table></div></div>
+  <div class="bg-white rounded-2xl shadow p-6"><h2 class="text-2xl font-bold mb-4">Course Results</h2><div class="overflow-auto"><table class="w-full text-sm"><tr class="border-b"><th class="text-left py-2">Term</th><th class="text-left">Course</th><th class="text-left">Title</th><th class="text-left">Credit</th><th class="text-left">Total</th><th class="text-left">Grade</th><th class="text-left">GP</th><th class="text-left">Status</th></tr>{% for r in course_rows %}<tr class="border-b"><td class="py-2">{{ r['term_name'] }}</td><td>{{ r['course_code'] }}</td><td>{{ r['title'] }}</td><td>{{ r['credit'] }}</td><td>{{ r['total'] if r['total'] is not none else '-' }}</td><td>{{ r['grade'] }}</td><td>{{ r['gp'] if r['gp'] is not none else '-' }}</td><td>{{ r['status'] }}</td></tr>{% endfor %}</table></div></div>
+  
+</div>
+{% endblock %}

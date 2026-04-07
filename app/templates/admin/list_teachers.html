@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6">
+<h2 class="text-2xl font-bold mb-4">Teachers</h2>
+<div class="overflow-auto"><table class="w-full text-sm"><tr class="border-b"><th class="text-left py-2">Teacher ID</th><th class="text-left">Name</th><th class="text-left">Email</th><th class="text-left">Department</th><th></th></tr>{% for r in rows %}<tr class="border-b"><td class="py-2">{{ r['teacher_id'] }}</td><td>{{ r['name'] }}</td><td>{{ r['email'] }}</td><td>{{ r['department'] }}</td><td><a class="text-sky-700" href="{{ url_for('admin.reset_user_password', user_id=r['id']) }}">Reset Password</a></td></tr>{% endfor %}</table></div>
+</div>
+{% endblock %}

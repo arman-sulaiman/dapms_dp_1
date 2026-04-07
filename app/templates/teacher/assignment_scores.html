@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="space-y-6">
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-2xl font-bold">{{ assessment['title'] }}</h2>
+    <div class="text-slate-500">Due {{ assessment['due_date'] or 'Not set' }} | Total {{ assessment['total_marks'] }}</div>
+  </div>
+  <div class="space-y-4">{% for r in rows %}<div class="bg-white rounded-2xl shadow p-6"><div class="flex justify-between gap-4"><div><div class="font-semibold">{{ r['name'] }}</div><div class="text-sm text-slate-500">{{ r['student_id'] }}</div>{% if r['file_name'] %}<a class="text-sky-700 text-sm inline-block mt-2" href="{{ url_for('uploaded_file', filename=r['file_name']) }}" target="_blank">Open student file</a>{% endif %}{% if r['student_note'] %}<div class="text-sm mt-2">Note: {{ r['student_note'] }}</div>{% endif %}{% if r['submitted_at'] %}<div class="text-sm text-emerald-700 mt-2">Submitted at {{ r['submitted_at'] }}</div>{% endif %}</div><form method="post" class="w-72 space-y-2"><input type="hidden" name="enrollment_id" value="{{ r['enrollment_id'] }}"><input name="marks" type="number" step="0.01" value="{{ r['marks'] }}" class="w-full border rounded-xl px-4 py-3"><input name="remarks" value="{{ r['remarks'] or '' }}" placeholder="Remarks" class="w-full border rounded-xl px-4 py-3"><button class="w-full bg-slate-900 text-white px-4 py-2 rounded-xl">Save</button></form></div></div>{% endfor %}</div>
+</div>
+{% endblock %}
