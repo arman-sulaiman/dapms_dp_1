@@ -13,9 +13,11 @@
       <select name="admission_semester" class="w-full border rounded-xl px-4 py-3" required>
         {% for semester in semesters %}<option value="{{ semester }}">{{ semester }}</option>{% endfor %}
       </select>
-      <input name="admission_year" type="number" min="2020" max="2100" placeholder="Admission Year" class="w-full border rounded-xl px-4 py-3" required>
+      <input name="admission_year" type="number" min="2020" max="2100" placeholder="Admission Year"
+        class="w-full border rounded-xl px-4 py-3" required>
     </div>
-    <input name="password" placeholder="Password (optional, default: student123)" class="w-full border rounded-xl px-4 py-3">
+    <input name="password" placeholder="Password (optional, default: student123)"
+      class="w-full border rounded-xl px-4 py-3">
     <button class="bg-slate-900 text-white px-5 py-3 rounded-xl">Save</button>
   </form>
 </div>
