@@ -1,7 +1,148 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="bg-white rounded-2xl shadow p-6">
-<h2 class="text-2xl font-bold mb-4">Teachers</h2>
-<div class="overflow-auto"><table class="w-full text-sm"><tr class="border-b"><th class="text-left py-2">Teacher ID</th><th class="text-left">Name</th><th class="text-left">Email</th><th class="text-left">Department</th><th></th></tr>{% for r in rows %}<tr class="border-b"><td class="py-2">{{ r['teacher_id'] }}</td><td>{{ r['name'] }}</td><td>{{ r['email'] }}</td><td>{{ r['department'] }}</td><td><a class="text-sky-700" href="{{ url_for('admin.reset_user_password', user_id=r['id']) }}">Reset Password</a></td></tr>{% endfor %}</table></div>
+<div class="bg-white rounded-2xl shadow p-6 space-y-6">
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800">Teachers</h2>
+      <p class="text-slate-500 mt-1">Filter teachers by department or search by teacher ID.</p>
+    </div>
+    <div class="text-sm text-slate-500">
+      Total Teachers: <span id="teacherCount" class="font-semibold text-slate-800">{{ rows|length }}</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-slate-50 rounded-2xl p-4 space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Department Filter</label>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-sky-600 text-white font-semibold" data-dept="all">
+          All
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="CSE">
+          CSE
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="BBA">
+          BBA
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="EEE">
+          EEE
+        </button>
+        <button type="button" class="dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium" data-dept="GED">
+          GED
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <label for="teacherIdSearch" class="block text-sm font-semibold text-slate-700 mb-2">Search by Teacher ID</label>
+      <input
+        id="teacherIdSearch"
+        type="text"
+        placeholder="Enter teacher ID"
+        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+      >
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-auto rounded-2xl border border-slate-200">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-100 text-slate-700">
+        <tr class="border-b">
+          <th class="text-left px-4 py-3 font-semibold">Teacher ID</th>
+          <th class="text-left px-4 py-3 font-semibold">Name</th>
+          <th class="text-left px-4 py-3 font-semibold">Email</th>
+          <th class="text-left px-4 py-3 font-semibold">Department</th>
+          <th class="text-left px-4 py-3 font-semibold">Action</th>
+        </tr>
+      </thead>
+      <tbody id="teacherTableBody">
+        {% for r in rows %}
+        <tr
+          class="border-b hover:bg-slate-50 teacher-row"
+          data-teacher-id="{{ r['teacher_id'] }}"
+          data-department="{{ r['department'] }}"
+        >
+          <td class="px-4 py-3 font-medium text-slate-800">{{ r['teacher_id'] }}</td>
+          <td class="px-4 py-3">{{ r['name'] }}</td>
+          <td class="px-4 py-3">{{ r['email'] }}</td>
+          <td class="px-4 py-3">{{ r['department'] }}</td>
+          <td class="px-4 py-3">
+            <a
+              class="text-sky-700 font-medium hover:text-sky-900"
+              href="{{ url_for('admin.reset_user_password', user_id=r['id']) }}"
+            >
+              Reset Password
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr id="noTeacherResultsRow" class="hidden">
+          <td colspan="5" class="px-4 py-6 text-center text-slate-500">
+            No teachers found for the selected filter.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+  let selectedDepartment = 'all';
+
+  const deptButtons = document.querySelectorAll('.dept-filter-btn');
+  const teacherIdSearchInput = document.getElementById('teacherIdSearch');
+  const teacherRows = document.querySelectorAll('.teacher-row');
+  const noTeacherResultsRow = document.getElementById('noTeacherResultsRow');
+  const teacherCount = document.getElementById('teacherCount');
+
+  function updateDepartmentButtons() {
+    deptButtons.forEach(btn => {
+      const isActive = btn.dataset.dept === selectedDepartment;
+      btn.className = isActive
+        ? 'dept-filter-btn px-4 py-2 rounded-xl bg-sky-600 text-white font-semibold'
+        : 'dept-filter-btn px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium';
+    });
+  }
+
+  function applyFilters() {
+    const teacherIdValue = teacherIdSearchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    teacherRows.forEach(row => {
+      const department = row.dataset.department;
+      const teacherId = row.dataset.teacherId.toLowerCase();
+
+      const departmentMatch =
+        selectedDepartment === 'all' || department === selectedDepartment;
+
+      const teacherIdMatch =
+        teacherIdValue === '' || teacherId.includes(teacherIdValue);
+
+      if (departmentMatch && teacherIdMatch) {
+        row.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    teacherCount.textContent = visibleCount;
+    noTeacherResultsRow.classList.toggle('hidden', visibleCount !== 0);
+  }
+
+  deptButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      selectedDepartment = this.dataset.dept;
+      updateDepartmentButtons();
+      applyFilters();
+    });
+  });
+
+  teacherIdSearchInput.addEventListener('input', applyFilters);
+
+  updateDepartmentButtons();
+  applyFilters();
+</script>
 {% endblock %}

@@ -2,11 +2,15 @@
 {% block content %}
 <div class="max-w-3xl bg-white rounded-2xl shadow p-6">
   <h2 class="text-2xl font-bold mb-2">Create Section</h2>
-  <p class="text-slate-500 mb-6">Courses remain the same across terms. Create new sections only for running or upcoming terms. Students will be enrolled again in the new term section.</p>
+  <p class="text-slate-500 mb-6">Courses remain the same across terms. Create new sections only for running or upcoming
+    terms. Students will be enrolled again in the new term section.</p>
   <form method="post" class="space-y-4">
-    <select name="term_id" class="w-full border rounded-xl px-4 py-3">{% for t in terms %}<option value="{{ t['id'] }}">{{ t['name'] }} — {{ t['status']|title }}</option>{% endfor %}</select>
-    <select name="course_id" class="w-full border rounded-xl px-4 py-3">{% for c in courses %}<option value="{{ c['id'] }}">{{ c['course_code'] }} - {{ c['title'] }}</option>{% endfor %}</select>
-    <select name="teacher_user_id" class="w-full border rounded-xl px-4 py-3">{% for t in teachers %}<option value="{{ t['id'] }}">{{ t['name'] }} - {{ t['teacher_id'] }}</option>{% endfor %}</select>
+    <select name="term_id" class="w-full border rounded-xl px-4 py-3">{% for t in terms %}<option value="{{ t['id'] }}">
+        {{ t['name'] }} — {{ t['status']|title }}</option>{% endfor %}</select>
+    <select name="course_id" class="w-full border rounded-xl px-4 py-3">{% for c in courses %}<option
+        value="{{ c['id'] }}">{{ c['course_code'] }} - {{ c['title'] }}</option>{% endfor %}</select>
+    <select name="teacher_user_id" class="w-full border rounded-xl px-4 py-3">{% for t in teachers %}<option
+        value="{{ t['id'] }}">{{ t['name'] }} - {{ t['teacher_id'] }}</option>{% endfor %}</select>
     <input name="section_no" placeholder="Section No" class="w-full border rounded-xl px-4 py-3" required>
     <input name="room_no" placeholder="Room No" class="w-full border rounded-xl px-4 py-3" required>
     <input name="schedule" placeholder="Schedule" class="w-full border rounded-xl px-4 py-3" required>

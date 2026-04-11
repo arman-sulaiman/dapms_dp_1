@@ -39,10 +39,7 @@
       <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Attendance</h3><a href="{{ url_for('teacher.create_attendance', section_id=section['id']) }}" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm">Take Attendance</a></div>
       <div class="space-y-3">{% for s in sessions %}<div class="border rounded-xl p-4"><div class="font-semibold">Class {{ s['class_no'] }}</div><div class="text-sm text-slate-500">{{ s['class_date'] }}</div></div>{% else %}<div class="text-slate-500">No attendance records yet.</div>{% endfor %}</div>
     <br><br> 
-      <a href="{{ url_for('teacher.attendance_report', section_id=section['id']) }}"
-   class="bg-slate-900 text-white px-4 py-2 rounded-xl">
-  Attendance Report
-</a>
+      
     </div>
 
     <div class="bg-white rounded-2xl shadow p-6">
