@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Iterable, Optional
 
 @dataclass
 class BaseModel:
-   
+
 
     row_fields: ClassVar[tuple[str, ...]] = tuple()
 
