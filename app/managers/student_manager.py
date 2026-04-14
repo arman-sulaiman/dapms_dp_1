@@ -92,8 +92,6 @@ class StudentManager:
         ''', (student_user_id,)).fetchone()
 
         return row['total_credit'] if row else 0
-    
-    
 
     def get_course_page_data(self, section_id: int, student_user_id: int) -> dict:
         recalculate_section_results(self.db, section_id)
@@ -247,3 +245,73 @@ class StudentManager:
 
     def build_results(self, student_user_id: int):
         return build_student_results(self.db, student_user_id)
+
+    def get_performance_data(self, section_id: int, student_user_id: int) -> dict:
+        data = self.get_course_page_data(section_id, student_user_id)
+
+        attendance = data.get('attendance', [])
+        assessments = data.get('assessments', [])
+        components = data.get('components', [])
+
+        total_classes = len(attendance)
+        present_classes = len([a for a in attendance if a['status'] == 'Present'])
+        attendance_percentage = round((present_classes * 100 / total_classes), 2) if total_classes > 0 else 0
+
+        total_assignments = len(assessments)
+        submitted_assignments = len([a for a in assessments if a['submission_status'] == 'Submitted'])
+        assignment_submission_percentage = round((submitted_assignments * 100 / total_assignments), 2) if total_assignments > 0 else 0
+
+        assignment_marks_obtained = sum(float(a['marks']) for a in assessments if a['marks'] is not None)
+        assignment_marks_total = sum(float(a['total_marks']) for a in assessments if a['marks'] is not None)
+        assignment_marks_percentage = round((assignment_marks_obtained * 100 / assignment_marks_total), 2) if assignment_marks_total > 0 else 0
+
+        component_marks_obtained = sum(float(c['marks']) for c in components if c['marks'] is not None)
+        component_marks_total = sum(float(c['max_marks']) for c in components if c['marks'] is not None)
+        component_marks_percentage = round((component_marks_obtained * 100 / component_marks_total), 2) if component_marks_total > 0 else 0
+
+        scores_for_average = [attendance_percentage, assignment_submission_percentage]
+
+        if assignment_marks_total > 0:
+            scores_for_average.append(assignment_marks_percentage)
+
+        if component_marks_total > 0:
+            scores_for_average.append(component_marks_percentage)
+
+        overall_score = round(sum(scores_for_average) / len(scores_for_average), 2) if scores_for_average else 0
+
+        advice = []
+
+        if attendance_percentage < 75:
+            advice.append('Your attendance is below a safe level. Attend classes more regularly to improve both learning and attendance-based marks.')
+
+        if assignment_submission_percentage < 80:
+            advice.append('You have missing or late assignment submissions. Try to submit every assignment on time.')
+
+        if assignment_marks_total > 0 and assignment_marks_percentage < 60:
+            advice.append('Your assignment marks are low. Review feedback carefully and improve preparation before the next submission.')
+
+        if component_marks_total > 0 and component_marks_percentage < 60:
+            advice.append('Your assessments marks are below average. Focus more on quizzes, assignments, lab tasks/presentation, or other course assessments.')
+
+        if not advice:
+            advice.append('Your performance is in a good position. Stay consistent and maintain this progress.')
+
+        return {
+            **data,
+            'performance': {
+                'present_classes': present_classes,
+                'total_classes': total_classes,
+                'attendance_percentage': attendance_percentage,
+                'submitted_assignments': submitted_assignments,
+                'total_assignments': total_assignments,
+                'assignment_submission_percentage': assignment_submission_percentage,
+                'assignment_marks_obtained': round(assignment_marks_obtained, 2),
+                'assignment_marks_total': round(assignment_marks_total, 2),
+                'assignment_marks_percentage': assignment_marks_percentage,
+                'component_marks_obtained': round(component_marks_obtained, 2),
+                'component_marks_total': round(component_marks_total, 2),
+                'component_marks_percentage': component_marks_percentage,
+                'overall_score': overall_score,
+                'advice': advice,
+            }
+        }

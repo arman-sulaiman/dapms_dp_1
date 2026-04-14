@@ -1,7 +1,125 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="bg-white rounded-2xl shadow p-6">
-  <h2 class="text-2xl font-bold mb-4">Result Approval Queue</h2>
-  <div class="space-y-3">{% for r in rows %}<a href="{{ url_for('admin.result_detail', section_id=r['id']) }}" class="block border rounded-xl p-4 hover:bg-slate-50"><div class="font-semibold">{{ r['course_code'] }} - {{ r['title'] }}</div><div class="text-sm text-slate-500">Section {{ r['section_no'] }} | {{ r['term_name'] }} | {{ r['status'] }}</div></a>{% else %}<div class="text-slate-500">No result submission yet.</div>{% endfor %}</div>
+<div class="space-y-8">
+
+
+
+    <center> <h2 class="text-3xl font-bold">Result Approval</h2></center>
+  
+  {% set term_names = rows | map(attribute='term_name') | list | unique | list %}
+
+  {% if rows %}
+    {% for term_name in term_names %}
+      {% set term_rows = rows | selectattr('term_name', 'equalto', term_name) | list %}
+      {% set submitted_rows = term_rows | selectattr('status', 'equalto', 'submitted') | list %}
+      {% set approved_rows = term_rows | selectattr('status', 'equalto', 'approved') | list %}
+
+      <div class="bg-white rounded-3xl shadow border border-slate-200 p-6 space-y-6">
+        <!-- Term Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900">{{ term_name }}</h3>
+            <p class="text-slate-500 mt-1">Result approval summary for this term</p>
+          </div>
+
+          <div class="flex flex-wrap gap-3 text-sm">
+            <span class="px-4 py-2 rounded-full bg-amber-100 text-amber-700 font-semibold">
+              Submitted: {{ submitted_rows|length }}
+            </span>
+            <span class="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">
+              Approved: {{ approved_rows|length }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Submitted List -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+            <h4 class="text-lg font-bold text-slate-900">Submitted Results</h4>
+          </div>
+
+          {% if submitted_rows %}
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {% for r in submitted_rows %}
+                <a href="{{ url_for('admin.result_detail', section_id=r['id']) }}"
+                   class="block rounded-2xl border border-amber-200 bg-amber-50/50 p-5 hover:border-amber-300 hover:bg-amber-50 transition">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="font-bold text-slate-900 text-lg">{{ r['course_code'] }}</div>
+                      <div class="text-slate-700 font-medium mt-1">{{ r['title'] }}</div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase">
+                      Submitted
+                    </span>
+                  </div>
+
+                  <div class="mt-4 space-y-1 text-sm text-slate-600">
+                    <div>Section {{ r['section_no'] }}</div>
+                    <div>Teacher: {{ r['teacher_name'] }}</div>
+                    <div>Term: {{ r['term_name'] }}</div>
+                  </div>
+
+                  <div class="mt-4 text-sky-700 text-sm font-semibold">
+                    Review Result →
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500 bg-slate-50">
+              No submitted result in this term.
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Approved List -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+            <h4 class="text-lg font-bold text-slate-900">Approved Results</h4>
+          </div>
+
+          {% if approved_rows %}
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {% for r in approved_rows %}
+                <a href="{{ url_for('admin.result_detail', section_id=r['id']) }}"
+                   class="block rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 hover:border-emerald-300 hover:bg-emerald-50 transition">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="font-bold text-slate-900 text-lg">{{ r['course_code'] }}</div>
+                      <div class="text-slate-700 font-medium mt-1">{{ r['title'] }}</div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase">
+                      Approved
+                    </span>
+                  </div>
+
+                  <div class="mt-4 space-y-1 text-sm text-slate-600">
+                    <div>Section {{ r['section_no'] }}</div>
+                    <div>Teacher: {{ r['teacher_name'] or 'Not assigned' }}</div>
+                    <div>Term: {{ r['term_name'] }}</div>
+                  </div>
+
+                  <div class="mt-4 text-emerald-700 text-sm font-semibold">
+                    View Result →
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500 bg-slate-50">
+              No approved result in this term.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="bg-white rounded-3xl shadow border border-slate-200 p-10 text-center">
+      <div class="text-slate-500 text-lg">No result submission yet.</div>
+    </div>
+  {% endif %}
+
 </div>
 {% endblock %}

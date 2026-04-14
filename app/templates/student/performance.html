@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-r from-slate-900 to-sky-700 text-white rounded-3xl shadow p-8 lg:p-10">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-sm font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10m-13 9h16a2 2 0 002-2V8a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          {{ section.term_name }}
+        </div>
+
+        <h2 class="text-3xl lg:text-4xl font-extrabold mt-4">
+          Course Performance
+        </h2>
+
+        <p class="mt-3 text-slate-200 text-base lg:text-lg">
+          {{ section.course_code }} - {{ section.title }} · Section {{ section.section_no }}
+        </p>
+      </div>
+
+      <div class="bg-white/10 rounded-3xl px-6 py-5 min-w-[250px] text-center">
+        <div class="text-sm text-slate-200">Overall Performance</div>
+        <div class="text-4xl font-extrabold mt-2">{{ performance.overall_score }}%</div>
+        <div class="mt-3">
+          {% if performance.overall_score >= 80 %}
+            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">Excellent</span>
+          {% elif performance.overall_score >= 60 %}
+            <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">Average</span>
+          {% else %}
+            <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-semibold">Needs Improvement</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overview -->
+  <div class="grid lg:grid-cols-3 gap-6">
+
+    <div class="lg:col-span-2 bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <div class="flex items-center gap-4 mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m3 6V7m3 10v-3m5 5H4" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">Overview</h3>
+          <p class="text-slate-500 mt-1">Your current performance summary in this course.</p>
+        </div>
+      </div>
+
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div class="text-sm text-slate-500">Performance Score</div>
+            <div class="text-4xl font-extrabold text-slate-900 mt-2">{{ performance.overall_score }}%</div>
+          </div>
+
+          <div>
+            {% if performance.overall_score >= 80 %}
+              <span class="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold">Excellent Progress</span>
+            {% elif performance.overall_score >= 60 %}
+              <span class="px-4 py-2 rounded-full bg-amber-100 text-amber-700 text-sm font-semibold">Moderate Progress</span>
+            {% else %}
+              <span class="px-4 py-2 rounded-full bg-rose-100 text-rose-700 text-sm font-semibold">Low Progress</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div class="w-full bg-slate-200 rounded-full h-4">
+            <div class="bg-sky-600 h-4 rounded-full" style="width: {{ performance.overall_score }}%"></div>
+          </div>
+        </div>
+
+        <div class="mt-6 text-sm text-slate-700 leading-7">
+          {% if performance.overall_score >= 80 %}
+            You are performing well in this course. Keep maintaining your attendance, assignment submissions, and marks.
+          {% elif performance.overall_score >= 60 %}
+            Your performance is acceptable, but there is still room to improve. Try to stay more consistent in class activities.
+          {% else %}
+            Your current performance needs improvement. Focus more on regular class participation, assignment submission, and marks improvement.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Advice -->
+    <div class="bg-white rounded-3xl shadow border border-slate-200 p-6">
+      <div class="flex items-center gap-4 mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">Advice</h3>
+          <p class="text-slate-500 mt-1">Suggestions to improve your course performance.</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        {% for tip in performance.advice %}
+          <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-700 leading-6">
+            {{ tip }}
+          </div>
+        {% else %}
+          <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-700 leading-6">
+            Keep maintaining your current progress.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

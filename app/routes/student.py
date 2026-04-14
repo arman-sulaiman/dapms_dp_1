@@ -70,3 +70,11 @@ def results():
         cgpa=cgpa,
         total_credits=total_credits
     )
+    
+@bp.route('/course/<int:section_id>/performance')
+@role_required('student')
+def performance(section_id):
+    return render_template(
+        'student/performance.html',
+        **_manager().get_performance_data(section_id, session.get('user_id'))
+    )

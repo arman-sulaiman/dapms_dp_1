@@ -133,3 +133,23 @@ class AdminManager:
 
     def all_users(self):
         return self.db.execute('SELECT id, name, email, role, department FROM users ORDER BY role, name').fetchall()
+
+
+    def pending_result_sections(self):
+        return self.db.execute('''
+        SELECT DISTINCT
+            sections.id,
+            courses.course_code,
+            courses.title,
+            sections.section_no,
+            terms.name AS term_name,
+            results.status,
+            users.name AS teacher_name
+        FROM results
+        JOIN sections ON sections.id = results.section_id
+        JOIN courses ON courses.id = sections.course_id
+        JOIN terms ON terms.id = sections.term_id
+        JOIN users ON users.id = sections.teacher_user_id
+        WHERE results.status IN ('submitted', 'approved')
+        ORDER BY terms.year DESC, terms.id DESC, courses.course_code
+    ''').fetchall()
